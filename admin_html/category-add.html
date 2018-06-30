@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="x-body">
+        <form class="layui-form">
+
+          <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="x-red">*</span>分类名
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="username" name="username" required="" lay-verify="required"
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="x-red">*</span>将会成为您唯一的分类名
+              </div>
+          </div>
+
+          <div class="layui-form-item">
+              <label class="layui-form-label">上级栏目</label>
+              <div class="layui-input-block">
+                <select name="parent_id" lay-filter="parent_id">
+                  <option value=""></option>
+                  <option value="0">写作</option>
+                  <option value="1">阅读</option>
+                  <option value="2">游戏</option>
+                  <option value="3">音乐</option>
+                  <option value="4">旅行</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="layui-form-item">
+              <label class="layui-form-label">模型</label>
+              <div class="layui-input-block">
+                <select name="rost_moble" lay-filter="rost_moble">
+                  <option value=""></option>
+                  <option value="0">写作</option>
+                  <option value="1">阅读</option>
+                  <option value="2">游戏</option>
+                  <option value="3">音乐</option>
+                  <option value="4">旅行</option>
+                </select>
+              </div>
+          </div>
+
+          <!--图片-->
+          <div class="layui-form-item">
+            <label class="layui-form-label">上传图片</label>
+            <div class="layui-upload">
+              <button type="button" class="layui-btn" id="test1">上传图片</button>
+              <div class="layui-upload-list">
+                <img class="layui-upload-img" id="demo1" style="max-width:400px;">
+                <p id="demoText"></p>
+              </div>
+            </div>  
+          </div>
+          <!--概述-->
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">概述</label>
+            <div class="layui-input-block">
+              <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+          </div>
+
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  增加
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+      layui.use('upload', function(){
+          var $ = layui.jquery
+          ,upload = layui.upload;
+          var url = 'http://www.admin.com/index.php/index/category/upload';
+          //普通图片上传
+          var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: url
+            ,before: function(obj){
+              //预读本地文件示例，不支持ie8
+              obj.preview(function(index, file, result){
+                $('#demo1').attr('src', result); //图片链接（base64）
+              });
+            }
+            ,done: function(res){
+              //如果上传失败
+              if(res.code > 0){
+                return layer.msg('上传失败');
+              }
+              //上传成功
+            }
+            ,error: function(){
+              //演示失败状态，并实现重传
+              var demoText = $('#demoText');
+              demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+              demoText.find('.demo-reload').on('click', function(){
+                uploadInst.upload();
+              });
+            }
+          });
+      })
+
+      layui.use(['form','layer'], function(){
+          $ = layui.jquery;
+        var form = layui.form
+        ,layer = layui.layer;
+        //自定义验证规则
+        // form.verify({
+        //   nikename: function(value){
+        //     if(value.length < 5){
+        //       return '昵称至少得5个字符啊';
+        //     }
+        //   }
+        //   ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+        //   ,repass: function(value){
+        //       if($('#L_pass').val()!=$('#L_repass').val()){
+        //           return '两次密码不一致';
+        //       }
+        //   }
+        // });
+        //监听提交
+        form.on('submit(add)', function(data){
+          console.log(data);
+          //发异步，把数据提交给php
+          layer.alert("增加成功", {icon: 6},function () {
+              // 获得frame索引
+              var index = parent.layer.getFrameIndex(window.name);
+              //关闭当前frame
+              parent.layer.close(index);
+          });
+          return false;
+        });
+      });
+    </script>
+   
+  </body>
+
+</html>
